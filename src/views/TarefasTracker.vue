@@ -9,7 +9,9 @@
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import { useStore } from "@/store";
+import { ADICIONA_TAREFA } from '@/store/tipo-de-mutacoes-tarefa'
+import { defineComponent, computed } from "vue";
 import FormularioBox from "@/components/FormularioBox.vue";
 import TarefaForm from "@/components/TarefaForm.vue";
 import BoxForm from "@/components/BoxForm.vue";
@@ -23,7 +25,7 @@ export default defineComponent({
   },
   data() {
     return {
-      tarefas: [],
+      tarefa: [],
     };
   },
   computed: {
@@ -33,10 +35,18 @@ export default defineComponent({
   },
   methods: {
     salvarTarefa(tarefa) {
-      this.tarefas.push(tarefa);
-      console.log(this.tarefa);
+      // this.tarefas.push(tarefa);
+      // console.log(tarefa);
+			this.store.commit(ADICIONA_TAREFA, tarefa)
     }
   },
+	setup() {
+		const store = useStore();
+    return {
+      tarefas: computed(() => store.state.tarefas),
+			store
+    };
+	}
 });
 </script>
 

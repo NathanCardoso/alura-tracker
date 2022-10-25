@@ -29,7 +29,6 @@ export default defineComponent({
 	methods: {
 		clicado() {
 			this.$emit('clicado')
-			console.log(this.desabilitado)
 		}
 	}
 })
