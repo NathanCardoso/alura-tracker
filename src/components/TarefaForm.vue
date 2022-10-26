@@ -5,11 +5,11 @@
         {{ tarefa.descricao || "Tarefa sem descrição" }}
       </div>
       <div
-        class="column is-7 is-flex is-align-items-cetner is-justify-content-space-between"
+        class="column is-7 is-flex is-align-items-center is-justify-content-space-between"
         v-else
       >
         <div class="column">
-          <input type="text" class="input" placeholder="Digite..." v-model="descricao" />
+          <input type="text" class="input" placeholder="Digite..." v-model.lazy="descricao"/>
         </div>
         <div class="column is-2">
           <button type="submit" class="button" @click="alterarTarefa(tarefa)">Salvar</button>
@@ -20,15 +20,14 @@
         <CronometroForm :tempoEmSegundos="tarefa.duracaoEmSegundos" />
       </div>
       <div>
-        <router-link
-          :to="`${tarefa.id}`"
+        <button
           class="button"
           @click="editarTarefa = !editarTarefa"
         >
           <span class="icon is-small">
             <i class="fas fa-pencil-alt"></i>
           </span>
-        </router-link>
+        </button>
         <button class="button ml-2 is-danger" @click="excluir(tarefa.id)">
           <span class="icon is-small">
             <i class="fas fa-trash"></i>
@@ -72,9 +71,9 @@ export default defineComponent({
 			if(tarefa.id) {
 				this.store.commit(ATUALIZAR_TAREFA, {
 					id: tarefa.id,
-					descricao: this.descricao
+					descricao: this.descricao,
+					duracaoEmSegundos: tarefa.duracaoEmSegundos
 				})
-				this.descricao = ''
 				this.editarTarefa = !this.editarTarefa
 			} else {
 				this.store.commit(ADICIONA_TAREFA, this.descricao)

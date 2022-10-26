@@ -12,7 +12,7 @@
 					<div class="select">
 						<select v-model="idProjeto">
 							<option value="">Selecione o projeto</option>
-							<option :value="projetos.id" v-for="projeto in projetos" :key="projeto.id">{{projeto.nome}}</option>
+							<option :value="projeto.id" v-for="projeto in projetos" :key="projeto.id">{{projeto.nome}}</option>
 						</select>
 					</div>
 				</div>
@@ -26,6 +26,7 @@
 <script>
 import { defineComponent, computed } from "vue";
 import TemporizadorForm from "./TemporizadorForm.vue";
+import { NOTIFICAR } from "@/store/tipo-de-mutacoes"
 import { useStore } from 'vuex'
 import { key } from '@/store'
 
@@ -43,6 +44,23 @@ export default defineComponent({
 	},
 	methods: {
 		finalizarTarefa(tempoDecorrido) {
+			const projeto = this.projetos.find(proj => proj.id == this.idProjeto)
+			
+			if(projeto) {
+				this.store.commit(NOTIFICAR, {
+					titulo: 'Parabéns',
+					texto: 'Sua tarefa foi adicionada com sucesso!',
+					tipo: 'SUCESSO'
+				})
+			} else {
+				this.store.commit(NOTIFICAR, {
+					titulo: 'Ops!',
+					texto: 'Selecione um projeto para finalizar a sua tarefa',
+					tipo: 'FALHA'
+				})
+				return
+			}
+			
 			this.$emit('aoSalvarTarefa', {
 				duracaoEmSegundos: tempoDecorrido,
 				descricao: this.descricao,
@@ -55,7 +73,8 @@ export default defineComponent({
 		const store = useStore(key)
 
 		return {
-			projetos: computed(() => store.state.projetos)
+			projetos: computed(() => store.state.projetos),
+			store
 		}
 	}
 });

@@ -1,5 +1,5 @@
 import {createStore, useStore as vuexUseStore} from 'vuex'
-import { ADICIONA_PROJETO, ALTERA_PROJETO, EXCLUIR_PROJETO } from '@/store/tipo-de-mutacoes'
+import { ADICIONA_PROJETO, ALTERA_PROJETO, EXCLUIR_PROJETO, NOTIFICAR } from '@/store/tipo-de-mutacoes'
 import { ADICIONA_TAREFA, ATUALIZAR_TAREFA, REMOVER_TAREFA } from '@/store/tipo-de-mutacoes-tarefa'
 
 export const key = Symbol()
@@ -7,7 +7,8 @@ export const key = Symbol()
 export const store = createStore({
 	state: {
 		projetos: [],
-		tarefas: []
+		tarefas: [],
+		notificacoes: []
 	},
 	mutations: {
 		[ADICIONA_PROJETO](state, nomeDoProjeto) {
@@ -34,6 +35,14 @@ export const store = createStore({
 		},
 		[REMOVER_TAREFA](state, id) {
 			state.tarefas = state.tarefas.filter(taref => taref.id != id)
+		},
+		[NOTIFICAR](state, novaNotificacao) {
+			novaNotificacao.id = new Date().getTime()
+			state.notificacoes.push(novaNotificacao)
+
+			setTimeout(() => {
+				state.notificacoes = state.notificacoes.filter(notificacao => notificacao.id != novaNotificacao.id)
+			}, 3000)
 		}
 	}
 })

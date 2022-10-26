@@ -13,23 +13,24 @@
 </template>
 
 <script>
-import { useStore } from '@/store'
+import { useStore } from "@/store";
 import { defineComponent } from "vue";
-import { ADICIONA_PROJETO, ALTERA_PROJETO, } from '@/store/tipo-de-mutacoes.js'
+import { ADICIONA_PROJETO, ALTERA_PROJETO} from "@/store/tipo-de-mutacoes.js";
+import useNotificador from "@/hooks/notificador"
 
 export default defineComponent({
   name: "FormularioTracker",
-	props: {
-		id: {
-			type: String
-		}
-	},
-	mounted() {
-		if(this.id) {
-			const projeto =  this.store.state.projetos.find(proj => proj.id == this.id)
-			this.nomeDoProjeto = projeto.nome || ''
-		}
-	},
+  props: {
+    id: {
+      type: String,
+    },
+  },
+  mounted() {
+    if (this.id) {
+      const projeto = this.store.state.projetos.find((proj) => proj.id == this.id);
+      this.nomeDoProjeto = projeto.nome || "";
+    }
+  },
   data() {
     return {
       nomeDoProjeto: "",
@@ -37,26 +38,33 @@ export default defineComponent({
   },
   methods: {
     salvar() {
-			if(this.id) {
-				this.store.commit(ALTERA_PROJETO, {
-					id: this.id,
-					nome: this.nomeDoProjeto
-				})
-			} else {
-				this.store.commit(ADICIONA_PROJETO, this.nomeDoProjeto)
-			}
+      if (this.id) {
+        this.store.commit(ALTERA_PROJETO, {
+          id: this.id,
+          nome: this.nomeDoProjeto,
+        });
+      } else {
+        this.store.commit(ADICIONA_PROJETO, this.nomeDoProjeto);
+      }
       this.nomeDoProjeto = "";
-			this.$router.push('/projetos')
+			console.log(this.notificar)
+      this.notificar(
+        "SUCESSO",
+        "Excelente!",
+        "Prontinho :) seu projeto já estar disponível."
+      );
+      this.$router.push("/projetos");
     },
   },
   setup() {
-		const store = useStore()
-		return {
-			store
-		}
-	},
+    const store = useStore();
+		const notificar = useNotificador()
+    return {
+      store,
+			notificar
+    };
+  },
 });
 </script>
 
-<style>
-</style>
+<style></style>
