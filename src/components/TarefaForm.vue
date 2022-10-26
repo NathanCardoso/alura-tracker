@@ -9,10 +9,10 @@
         v-else
       >
         <div class="column">
-          <input type="text" class="input" v-model="description" />
+          <input type="text" class="input" placeholder="Digite..." v-model="descricao" />
         </div>
         <div class="column is-2">
-          <button type="submit" class="button" @click="editarTarefa = !editarTarefa">Salvar</button>
+          <button type="submit" class="button" @click="alterarTarefa(tarefa)">Salvar</button>
         </div>
       </div>
 
@@ -41,7 +41,7 @@
 
 <script>
 import { useStore } from "@/store";
-import { REMOVER_TAREFA } from "@/store/tipo-de-mutacoes-tarefa";
+import { REMOVER_TAREFA, ATUALIZAR_TAREFA, ADICIONA_TAREFA } from "@/store/tipo-de-mutacoes-tarefa";
 import { defineComponent } from "vue";
 import CronometroForm from "./CronometroForm.vue";
 import BoxForm from "./BoxForm.vue";
@@ -51,6 +51,7 @@ export default defineComponent({
   data() {
     return {
       editarTarefa: true,
+			descricao: ''
     };
   },
   props: {
@@ -67,6 +68,18 @@ export default defineComponent({
     excluir(id) {
       this.store.commit(REMOVER_TAREFA, id);
     },
+		alterarTarefa(tarefa) {
+			if(tarefa.id) {
+				this.store.commit(ATUALIZAR_TAREFA, {
+					id: tarefa.id,
+					descricao: this.descricao
+				})
+				this.descricao = ''
+				this.editarTarefa = !this.editarTarefa
+			} else {
+				this.store.commit(ADICIONA_TAREFA, this.descricao)
+			}
+		}
   },
   setup() {
     const store = useStore();
