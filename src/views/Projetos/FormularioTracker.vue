@@ -47,7 +47,6 @@ export default defineComponent({
         this.store.commit(ADICIONA_PROJETO, this.nomeDoProjeto);
       }
       this.nomeDoProjeto = "";
-			console.log(this.notificar)
       this.notificar(
         "SUCESSO",
         "Excelente!",

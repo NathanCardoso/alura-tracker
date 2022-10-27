@@ -35,8 +35,6 @@ export default defineComponent({
   },
   methods: {
     salvarTarefa(tarefa) {
-      // this.tarefas.push(tarefa);
-      // console.log(tarefa);
 			this.store.commit(ADICIONA_TAREFA, tarefa)
     }
   },

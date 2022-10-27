@@ -64,7 +64,7 @@ export default defineComponent({
 			this.$emit('aoSalvarTarefa', {
 				duracaoEmSegundos: tempoDecorrido,
 				descricao: this.descricao,
-				// projeto: this.projetos.find(proj => proj.id == this.idProjeto)
+				projeto: projeto
 			})
 			this.descricao = ''
 		}
