@@ -1,6 +1,8 @@
 import {createStore, useStore as vuexUseStore} from 'vuex'
-import { ADICIONA_PROJETO, ALTERA_PROJETO, EXCLUIR_PROJETO, NOTIFICAR } from '@/store/tipo-de-mutacoes'
+import { ADICIONA_PROJETO, ALTERA_PROJETO, EXCLUIR_PROJETO, DEFINIR_PROJETO, NOTIFICAR } from '@/store/tipo-de-mutacoes'
 import { ADICIONA_TAREFA, ATUALIZAR_TAREFA, REMOVER_TAREFA } from '@/store/tipo-de-mutacoes-tarefa'
+import { OBTER_PROJETOS, CADASTRAR_PROJETO, ALTERAR_PROJETO, REMOVER_PROJETO } from "@/store/tipo-acoes"
+import http from "@/http"
 
 export const key = Symbol()
 
@@ -17,6 +19,7 @@ export const store = createStore({
 				nome: nomeDoProjeto
 			}
 			state.projetos.push(projeto)
+			console.log([OBTER_PROJETOS])
 		},
 		[ALTERA_PROJETO](state, projeto) {
 			const index = state.projetos.findIndex(proj => proj.id == projeto.id)
@@ -24,6 +27,9 @@ export const store = createStore({
 		},
 		[EXCLUIR_PROJETO](state, id) {
 			state.projetos = state.projetos.filter(proj => proj.id != id)
+		},
+		[DEFINIR_PROJETO](state, projetos) {
+			state.projetos = projetos
 		},
 		[ADICIONA_TAREFA](state, tarefa) {
 			tarefa.id = new Date().toISOString()
@@ -43,6 +49,22 @@ export const store = createStore({
 			setTimeout(() => {
 				state.notificacoes = state.notificacoes.filter(notificacao => notificacao.id != novaNotificacao.id)
 			}, 3000)
+		}
+	},
+	actions: {
+		[OBTER_PROJETOS]({ commit }) {
+			http.get('projetos').then(resposta => commit(DEFINIR_PROJETO, resposta.data))
+		},
+		[CADASTRAR_PROJETO](contexto, nomeDoProjeto) {
+			return http.post('projetos', {
+				nome: nomeDoProjeto
+			})
+		},
+		[ALTERAR_PROJETO](contexto, projeto) {
+			return http.put(`projetos/${projeto.id}`, projeto)
+		},
+		[REMOVER_PROJETO]({ commit }, id) {
+			return http.delete(`projetos/${id}`).then(() => commit(EXCLUIR_PROJETO, id))
 		}
 	}
 })
