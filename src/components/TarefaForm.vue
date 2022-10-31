@@ -1,7 +1,7 @@
 <template>
   <BoxForm>
-    <div class="columns is-flex is-align-items-center is-justify-content-space-between">
-      <div class="column is-7 is-flex" v-if="editarTarefa">
+    <div class="columns is-flex is-align-items-center is-justify-content-space-between clicavel">
+      <div class="column is-7 is-flex" v-if="editarTarefa" @click="tarefaClicada">
         <div class="column is-5">
           {{ tarefa.descricao || "Tarefa sem descrição" }}
         </div>
@@ -60,6 +60,7 @@ import BoxForm from "./BoxForm.vue";
 
 export default defineComponent({
   name: "TarefaForm",
+	emits: ['aoTarefaClicada'],
   data() {
     return {
       editarTarefa: true,
@@ -77,6 +78,9 @@ export default defineComponent({
     BoxForm,
   },
   methods: {
+		tarefaClicada() {
+			this.$emit('aoTarefaClicada', this.tarefa)
+		},
     excluir(id) {
       this.store.commit(REMOVER_TAREFA, id);
     },
@@ -86,6 +90,10 @@ export default defineComponent({
           id: tarefa.id,
           descricao: this.descricao,
           duracaoEmSegundos: tarefa.duracaoEmSegundos,
+          projeto: {
+            id: tarefa.projeto.id,
+            nome: tarefa.projeto.nome,
+          },
         });
         this.editarTarefa = !this.editarTarefa;
       } else {
@@ -102,4 +110,8 @@ export default defineComponent({
 });
 </script>
 
-<style></style>
+<style scoped>
+	.clicavel {
+		cursor: pointer;
+	}
+</style>

@@ -27,6 +27,7 @@
 import { defineComponent, computed } from "vue";
 import TemporizadorForm from "./TemporizadorForm.vue";
 import { NOTIFICAR } from "@/store/tipo-de-mutacoes"
+import { OBTER_PROJETOS } from "@/store/tipo-acoes";
 import { useStore } from 'vuex'
 import { key } from '@/store'
 
@@ -71,6 +72,7 @@ export default defineComponent({
 	},
 	setup() {
 		const store = useStore(key)
+		store.dispatch(OBTER_PROJETOS)
 
 		return {
 			projetos: computed(() => store.state.projetos),

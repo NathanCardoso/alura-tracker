@@ -1,7 +1,7 @@
 import {createStore, useStore as vuexUseStore} from 'vuex'
-import { ADICIONA_PROJETO, ALTERA_PROJETO, EXCLUIR_PROJETO, DEFINIR_PROJETO, NOTIFICAR } from '@/store/tipo-de-mutacoes'
+import { ADICIONA_PROJETO, ALTERA_PROJETO, EXCLUIR_PROJETO, DEFINIR_PROJETO, NOTIFICAR, DEFINIR_TAREFAS, ALTERA_TAREFA } from '@/store/tipo-de-mutacoes'
 import { ADICIONA_TAREFA, ATUALIZAR_TAREFA, REMOVER_TAREFA } from '@/store/tipo-de-mutacoes-tarefa'
-import { OBTER_PROJETOS, CADASTRAR_PROJETO, ALTERAR_PROJETO, REMOVER_PROJETO } from "@/store/tipo-acoes"
+import { OBTER_PROJETOS, CADASTRAR_PROJETO, ALTERAR_PROJETO, REMOVER_PROJETO, OBTER_TAREFAS, CADASTRAR_TAREFA, ALTERAR_TAREFA } from "@/store/tipo-acoes"
 import http from "@/http"
 
 export const key = Symbol()
@@ -19,7 +19,6 @@ export const store = createStore({
 				nome: nomeDoProjeto
 			}
 			state.projetos.push(projeto)
-			console.log([OBTER_PROJETOS])
 		},
 		[ALTERA_PROJETO](state, projeto) {
 			const index = state.projetos.findIndex(proj => proj.id == projeto.id)
@@ -49,7 +48,17 @@ export const store = createStore({
 			setTimeout(() => {
 				state.notificacoes = state.notificacoes.filter(notificacao => notificacao.id != novaNotificacao.id)
 			}, 3000)
-		}
+		},
+		[ADICIONA_TAREFA](state, tarefa) {
+			state.tarefas.push(tarefa)
+		},
+		[ALTERA_TAREFA](state, tarefa) {
+			const index = state.tarefas.findIndex(proj => proj.id == tarefa.id)
+			state.projetos[index] = tarefa
+		},
+		[DEFINIR_TAREFAS](state, tarefas) {
+			state.tarefas = tarefas
+		},
 	},
 	actions: {
 		[OBTER_PROJETOS]({ commit }) {
@@ -65,7 +74,16 @@ export const store = createStore({
 		},
 		[REMOVER_PROJETO]({ commit }, id) {
 			return http.delete(`projetos/${id}`).then(() => commit(EXCLUIR_PROJETO, id))
-		}
+		},
+		[OBTER_TAREFAS]({ commit }) {
+			http.get('tarefas').then(resposta => commit(DEFINIR_TAREFAS, resposta.data))
+		},
+		[CADASTRAR_TAREFA](contexto, tarefa) {
+			return http.post('tarefas', tarefa).then(resposta => this.commit(ADICIONA_TAREFA, resposta.data))
+		},
+		[ALTERAR_TAREFA]({ commit }, tarefa) {
+			return http.put(`tarefas/${tarefa.id}`, tarefa).then(() => commit(ALTERA_TAREFA, tarefa))
+		},
 	}
 })
 
