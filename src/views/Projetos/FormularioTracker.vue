@@ -15,7 +15,7 @@
 <script>
 import { useStore } from "@/store";
 import { defineComponent } from "vue";
-import { ALTERAR_PROJETO } from "@/store/tipo-acoes";
+// import { ALTERAR_PROJETO } from "@/store/tipo-acoes";
 import { CADASTRAR_PROJETO } from "@/store/tipo-acoes";
 import useNotificador from "@/hooks/notificador";
 
@@ -28,7 +28,8 @@ export default defineComponent({
   },
   mounted() {
     if (this.id) {
-      const projeto = this.store.state.projetos.find((proj) => proj.id == this.id);
+      const projeto = this.store.state.projeto.projetos.find((proj) => proj.id == this.id);
+			console.log(projeto.nome)
       this.nomeDoProjeto = projeto.nome || "";
     }
   },
@@ -39,9 +40,10 @@ export default defineComponent({
   },
   methods: {
     salvar() {
+			const lalala = 'projeto/ALTERAR_PROJETO'
       if (this.id) {
         this.store
-          .dispatch(ALTERAR_PROJETO, {
+          .dispatch(lalala, {
             id: this.id,
             nome: this.nomeDoProjeto,
           })

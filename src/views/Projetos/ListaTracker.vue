@@ -48,11 +48,15 @@ export default defineComponent({
 			this.store.dispatch(REMOVER_PROJETO, id)
 		}
 	},
+	mounted() {
+		console.log(OBTER_PROJETOS)
+	},
   setup() {
+		// const lalala = 'projeto' + '/' + 'OBTER_PROJETO'
     const store = useStore();
-		store.dispatch(OBTER_PROJETOS)
+		store.dispatch('projeto/OBTER_PROJETO')
     return {
-      projetos: computed(() => store.state.projetos),
+      projetos: computed(() => store.state.projeto.projetos),
 			store
     };
   },
