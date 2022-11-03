@@ -39,25 +39,37 @@
 <script>
 import { useStore } from "@/store";
 import { defineComponent, computed } from "vue";
-import { OBTER_PROJETOS, REMOVER_PROJETO } from "@/store/tipo-acoes";
+import { OBTER_PROJETOS, REMOVER_PROJETO } from "@/store/tipo-acoes-projetos";
+import useNotificador from "@/hooks/notificador";
+import { lidarComSucesso, lidarComFalha } from "@/hooks/tratamento-de-notificacao";
 
 export default defineComponent({
   name: "ListaTracker",
-	methods: {
-		excluir(id) {
-			this.store.dispatch(REMOVER_PROJETO, id)
-		}
-	},
-	mounted() {
-		console.log(OBTER_PROJETOS)
-	},
+  methods: {
+    excluir(id) {
+      this.store
+        .dispatch(`projeto/${REMOVER_PROJETO}`, id)
+        .then(() =>
+          lidarComSucesso(
+            "SUCESSO",
+            "Excelente!",
+            "Prontinho :) seu projeto já foi excluido!"
+          )
+        )
+        .catch(() => {
+          lidarComFalha("FALHA", "Ops!", "Não conseguimos exlcuir o seu projeto");
+        });
+    },
+  },
   setup() {
-		// const lalala = 'projeto' + '/' + 'OBTER_PROJETO'
     const store = useStore();
-		store.dispatch('projeto/OBTER_PROJETO')
+    const notificar = useNotificador();
+    store.dispatch(`projeto/${OBTER_PROJETOS}`);
+		
     return {
       projetos: computed(() => store.state.projeto.projetos),
-			store
+      store,
+      notificar,
     };
   },
 });

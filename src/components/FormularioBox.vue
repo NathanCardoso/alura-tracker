@@ -26,8 +26,8 @@
 <script>
 import { defineComponent, computed } from "vue";
 import TemporizadorForm from "./TemporizadorForm.vue";
-import { NOTIFICAR } from "@/store/tipo-de-mutacoes"
-import { OBTER_PROJETOS } from "@/store/tipo-acoes";
+import { lidarComSucesso, lidarComFalha } from "@/hooks/tratamento-de-notificacao";
+import { OBTER_PROJETOS } from "@/store/tipo-acoes-projetos";
 import { useStore } from 'vuex'
 import { key } from '@/store'
 
@@ -46,19 +46,11 @@ export default defineComponent({
 	methods: {
 		finalizarTarefa(tempoDecorrido) {
 			const projeto = this.projetos.find(proj => proj.id == this.idProjeto)
-			
+
 			if(projeto) {
-				this.store.commit(NOTIFICAR, {
-					titulo: 'Parabéns',
-					texto: 'Sua tarefa foi adicionada com sucesso!',
-					tipo: 'SUCESSO'
-				})
+				lidarComSucesso('SUCESSO', 'Parabéns', 'Sua tarefa foi adicionada com sucesso!') 
 			} else {
-				this.store.commit(NOTIFICAR, {
-					titulo: 'Ops!',
-					texto: 'Selecione um projeto para finalizar a sua tarefa',
-					tipo: 'FALHA'
-				})
+				lidarComFalha('FALHA', 'Ops!', 'Selecione um projeto para finalizar a sua tarefa',)
 				return
 			}
 			
@@ -72,7 +64,7 @@ export default defineComponent({
 	},
 	setup() {
 		const store = useStore(key)
-		store.dispatch(OBTER_PROJETOS)
+		store.dispatch(`projeto/${OBTER_PROJETOS}`)
 
 		return {
 			projetos: computed(() => store.state.projeto.projetos),

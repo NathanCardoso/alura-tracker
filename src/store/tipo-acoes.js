@@ -1,8 +1,0 @@
-export const OBTER_PROJETOS = "projeto/OBTER_PROJETOS"
-export const CADASTRAR_PROJETO = "projeto/CADASTRAR_PROJETO"
-export const ALTERAR_PROJETO = "projeto/ALTERAR_PROJETO"
-export const REMOVER_PROJETO = "projeto/REMOVER_PROJETO"
-
-export const OBTER_TAREFAS = "OBTER_TAREFAS"
-export const CADASTRAR_TAREFA = "CADASTRAR_TAREFA"
-export const ALTERAR_TAREFA = "ALTERAR_TAREFA"
