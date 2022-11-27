@@ -28,7 +28,7 @@
 <script>
 import { useStore } from "@/store";
 import { EXCLUIR_TAREFA } from "@/store/tipo-acoes-tarefas";
-import { defineComponent, computed } from "vue";
+import { defineComponent, computed, ref } from "vue";
 import CronometroForm from "./CronometroForm.vue";
 import BoxForm from "./BoxForm.vue";
 import { lidarComSucesso, lidarComFalha } from "@/hooks/tratamento-de-notificacao";
@@ -36,12 +36,6 @@ import { lidarComSucesso, lidarComFalha } from "@/hooks/tratamento-de-notificaca
 export default defineComponent({
   name: "TarefaForm",
   emits: ["aoTarefaClicada"],
-  data() {
-    return {
-      editarTarefa: true,
-      descricao: "",
-    };
-  },
   props: {
     tarefa: {
       type: Object,
@@ -52,12 +46,16 @@ export default defineComponent({
     CronometroForm,
     BoxForm,
   },
-  methods: {
-    tarefaClicada() {
-      this.$emit("aoTarefaClicada", this.tarefa);
-    },
-    excluir(id) {
-      this.store
+  setup(props, { emit }) {
+    const store = useStore();
+    const editarTarefa = ref(true);
+		const tarefas = computed(() => store.state.tarefa.tarefas)
+		
+    const tarefaClicada = () => {
+      emit("aoTarefaClicada", props.tarefa);
+    };
+    const excluir = (id) => {
+      store
         .dispatch(`tarefa/${EXCLUIR_TAREFA}`, id)
         .then(() =>
           lidarComSucesso(
@@ -69,13 +67,13 @@ export default defineComponent({
         .catch(() =>
           lidarComFalha("FALHA", "Ops!", ":( Não conseguimos excluir a sua tarefa!")
         );
-    },
-  },
-  setup() {
-    const store = useStore();
+    };
+
     return {
-      store,
-      tarefas: computed(() => store.state.tarefa.tarefas),
+      editarTarefa,
+      tarefaClicada,
+      excluir,
+      tarefas
     };
   },
 });

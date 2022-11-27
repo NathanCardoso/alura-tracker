@@ -6,7 +6,11 @@
     },
     {
       "id": 2,
-      "nome": "Estudar Angular"
+      "nome": "Estudar AngularJs"
+    },
+    {
+      "id": 3,
+      "nome": "Estudar ReactJS"
     }
   ],
   "tarefas": [
@@ -27,6 +31,15 @@
         "nome": "Alura Tracker 3.0"
       },
       "id": 2
+    },
+    {
+      "duracaoEmSegundos": 2,
+      "descricao": "react show",
+      "projeto": {
+        "id": 3,
+        "nome": "Estudar ReactJS"
+      },
+      "id": 3
     }
   ]
 }

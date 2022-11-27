@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { defineComponent, computed } from "vue";
+import { defineComponent, computed, ref } from "vue";
 import TemporizadorForm from "./TemporizadorForm.vue";
 import { lidarComSucesso, lidarComFalha } from "@/hooks/tratamento-de-notificacao";
 import { OBTER_PROJETOS } from "@/store/tipo-acoes-projetos";
@@ -37,15 +37,16 @@ export default defineComponent({
   components: {
     TemporizadorForm,
   },
-	data() {
-		return  {
-			descricao: '',
-			idProjeto: ''
-		}
-	},
-	methods: {
-		finalizarTarefa(tempoDecorrido) {
-			const projeto = this.projetos.find(proj => proj.id == this.idProjeto)
+	setup(props, { emit }) {
+		const store = useStore(key)
+
+		const idProjeto = ref("")
+		const descricao = ref("")
+
+		const projetos = computed(() => store.state.projeto.projetos)
+		
+		const finalizarTarefa = (tempoDecorrido) => {
+			const projeto = projetos.value.find(proj => proj.id == idProjeto.value)
 
 			if(projeto) {
 				lidarComSucesso('SUCESSO', 'Parabéns', 'Sua tarefa foi adicionada com sucesso!') 
@@ -54,21 +55,20 @@ export default defineComponent({
 				return
 			}
 			
-			this.$emit('aoSalvarTarefa', {
+			emit('aoSalvarTarefa', {
 				duracaoEmSegundos: tempoDecorrido,
-				descricao: this.descricao,
+				descricao: descricao.value,
 				projeto: projeto
 			})
-			this.descricao = ''
+			descricao.value = ''
 		}
-	},
-	setup() {
-		const store = useStore(key)
 		store.dispatch(`projeto/${OBTER_PROJETOS}`)
 
 		return {
-			projetos: computed(() => store.state.projeto.projetos),
-			store
+			idProjeto,
+			descricao,
+			projetos,
+			finalizarTarefa
 		}
 	}
 });
