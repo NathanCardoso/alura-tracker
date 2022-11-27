@@ -28,8 +28,11 @@ export default {
 		},
 	},
 	actions: {
-		[OBTER_TAREFAS]({ commit }) {
-			http.get('tarefas').then(resposta => commit(DEFINIR_TAREFAS, resposta.data))
+		[OBTER_TAREFAS]({ commit }, filtro) {
+			let url = 'tarefas'
+			
+			filtro ? url += '?descricao=' + filtro : ''
+			http.get(url).then(resposta => commit(DEFINIR_TAREFAS, resposta.data))
 		},
 		[CADASTRAR_TAREFA]({ commit }, tarefa) {
 			return http.post('tarefas', tarefa).then(resposta => commit(ADICIONA_TAREFA, resposta.data))

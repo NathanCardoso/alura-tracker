@@ -1,6 +1,19 @@
 <template>
   <FormularioBox @aoSalvarTarefa="salvarTarefa" />
   <div class="lista">
+    <div class="field">
+      <p class="control has-icons-left">
+        <input
+          type="text"
+          class="input"
+          placeholder="Digite para filtrar"
+          v-model="filtro"
+        />
+        <span class="icon is-small is-left">
+          <i class="fas fa-search"></i>
+        </span>
+      </p>
+    </div>
     <TarefaForm
       v-for="(tarefa, index) in tarefas"
       :key="index"
@@ -10,36 +23,29 @@
     <BoxForm v-if="listaVazia">
       <p>Você não estar muito produtivo hoje :(</p>
     </BoxForm>
-    <div
-      class="modal"
-      :class="{ 'is-active': tarefaSelecionada }"
-      v-if="tarefaSelecionada"
-    >
-      <div class="modal-background" @click="fecharModal"></div>
-      <div class="modal-card">
-        <header class="modal-card-head">
-          <p class="modal-card-title">Editando uma tarefa</p>
-          <button class="delete" aria-label="close" @click="fecharModal"></button>
-        </header>
-        <section class="modal-card-body">
-          <div class="field">
-            <label for="descricaoDaTarefa" class="label">Descricao</label>
-            <input
-              type="text"
-              class="input"
-              v-model="tarefaSelecionada.descricao"
-              id="descricaoDaTarefa"
-            />
-          </div>
-        </section>
-        <footer class="modal-card-foot">
-          <button class="button is-success" @click="alterarTarefa">
-            Salvar altereações
-          </button>
-          <button class="button is-danger" @click="fecharModal">Cancelar</button>
-        </footer>
-      </div>
-    </div>
+    <ModalTracker :mostrar="tarefaSelecionada != null">
+      <template v-slot:cabecalho>
+        <p class="modal-card-title">Editando uma tarefa</p>
+        <button class="delete" aria-label="close" @click="fecharModal"></button>
+      </template>
+      <template v-slot:corpo>
+        <div class="field">
+          <label for="descricaoDaTarefa" class="label">Descricao</label>
+          <input
+            type="text"
+            class="input"
+            v-model="tarefaSelecionada.descricao"
+            id="descricaoDaTarefa"
+          />
+        </div>
+      </template>
+      <template v-slot:rodape>
+        <button class="button is-success" @click="alterarTarefa">
+          Salvar altereações
+        </button>
+        <button class="button is-danger" @click="fecharModal">Cancelar</button>
+      </template>
+    </ModalTracker>
   </div>
 </template>
 
@@ -50,18 +56,19 @@ import {
   CADASTRAR_TAREFA,
   ALTERAR_TAREFA,
 } from "@/store/tipo-acoes-tarefas";
-import { defineComponent, computed } from "vue";
+import { defineComponent, computed, ref, watchEffect } from "vue";
 import FormularioBox from "@/components/FormularioBox.vue";
 import TarefaForm from "@/components/TarefaForm.vue";
 import BoxForm from "@/components/BoxForm.vue";
 import { lidarComSucesso, lidarComFalha } from "@/hooks/tratamento-de-notificacao";
-
+import ModalTracker from "@/components/ModalTracker.vue"
 export default defineComponent({
   name: "App",
   components: {
     FormularioBox,
     TarefaForm,
     BoxForm,
+		ModalTracker
   },
   data() {
     return {
@@ -102,8 +109,14 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
-    store.dispatch(`tarefa/${OBTER_TAREFAS}`);
+    const filtro = ref("");
+
+    watchEffect(() => {
+      store.dispatch(`tarefa/${OBTER_TAREFAS}`, filtro.value);
+    });
+
     return {
+      filtro,
       tarefas: computed(() => store.state.tarefa.tarefas),
       store,
     };
